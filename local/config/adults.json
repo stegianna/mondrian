@@ -3,10 +3,10 @@
 	"output": "anonymized/adults.csv",
 	"id_columns": ["capital-loss", "capital-gain"],
 	"redact": true,
-    "quasiid_columns": ["age", "education-num", "race", "native-country"],
+    "quasiid_columns": ["age", "education-num", "hours-per-week", "native-country"],
     "sensitive_columns": ["income"],
     "column_score": "neg_entropy",
-    "K": 3,
+    "K": 10,
     "L": 2,
     "quasiid_generalizations": [
 		{

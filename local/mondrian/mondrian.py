@@ -15,6 +15,12 @@
 
 # Functions that define Mondrian
 
+from sklearn.cluster import Birch
+from sklearn.exceptions import ConvergenceWarning
+import numpy as np
+import warnings
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
 def cut_column(ser):
     """Determine two sets of indices identifing the values to be stored in left
     and right partitions after the cut.
@@ -47,6 +53,35 @@ def cut_column(ser):
     return (dfl, dfr, median)
 
 
+def cut_column_birch(birch, ser):
+    if ser.dtype.name in ('object', 'category'):
+        frequencies = ser.value_counts()
+        pos = len(ser) // 2
+        median_idx = lc = 0
+        for count in frequencies:
+            median_idx += 1
+            lc += count
+            if lc >= pos:
+                # move the median to the less represented side
+                rc = len(ser) - lc
+                if lc - count > rc:
+                    median_idx -= 1
+                break
+        values = frequencies.index
+        lv = set(values[:median_idx])
+        rv = set(values[median_idx:])
+        dfl = ser.index[ser.isin(lv)]
+        dfr = ser.index[ser.isin(rv)]
+        median = "obj-cat"
+    else:
+        X = np.reshape(ser.to_numpy(), (-1, 1))
+        labels = birch.fit_predict(X)
+        dfl = ser.index[labels == 0]
+        dfr = ser.index[labels == 1]
+    return (dfl, dfr)
+    
+
+
 def partition_dataframe(df,
                         quasiid_columns,
                         sensitive_columns,
@@ -60,6 +95,7 @@ def partition_dataframe(df,
     # puts a range index obj (start, end, step) into a list
     partitions = [df.index]
     partitions_number = 1
+    birch = Birch(n_clusters=2, threshold=0.05)
 
     while partitions and len(partitions) < num_partitions:
         print('Partitions: {}, '.format(len(partitions)), end='')
@@ -74,12 +110,15 @@ def partition_dataframe(df,
         # If no valid cut is found, then return the whole partition
         for score, column in sorted(scores, reverse=True):
             lp, rp, median = cut_column(df[column][partition])
+            #lp, rp = cut_column_birch(birch, df[column][partition])
             if not (is_valid(df, lp, sensitive_columns)
                     and is_valid(df, rp, sensitive_columns)):
                 continue
             partitions_number += 1
             print('cutting over column:', column, '(', 'score:', score,
                   'median:', median, 'partition:', partitions_number, ')')
+            #print('cutting over column:', column, '(', 'score:', score,
+            #    'partition:', partitions_number, ')')
             partitions.append(lp)
             partitions.append(rp)
             break

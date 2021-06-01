@@ -1,14 +1,14 @@
 {
-    "input": "dataset/usa2018.csv",
-    "output": "anonymized/usa2018.csv",
-    "quasiid_columns": ["STATEFIP", "AGE", "EDUCD", "OCC"],
-    "sensitive_columns": ["INCTOT"],
+    "input": "dataset/random.csv",
+    "output": "anonymized/random.csv",
+    "quasiid_columns": ["col1", "col2", "col3", "col4", "col5"],
+    "sensitive_columns": ["sens_col"],
     "column_score": "span",
     "K": 3,
     "L": 2,
     "quasiid_generalizations": [
         {
-	    "qi_name": "EDUCD",
+	    "qi_name": "col2",
 	    "generalization_type": "common_prefix",
 	    "params": {
 		"hide-mark": "+"

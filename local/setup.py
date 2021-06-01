@@ -24,6 +24,8 @@ setup(
         "pandas==1.1.3",
         "scipy",
         "treelib==1.6.1",
+        "scikit-learn",
+        "minisom"
     ],
     url="https://github.com/unibg-seclab/spark-mondrian",
     author="UniBG Seclab",

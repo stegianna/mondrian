@@ -31,6 +31,8 @@ spark-submit \
     --conf spark.sql.shuffle.partitions=${SPARK_APP_WORKERS} \
     --conf spark.cores.max=${SPARK_APP_WORKERS} \
     --conf spark.deploy.defaultCores=${SPARK_APP_WORKERS} \
+	--conf spark.executor.memory=600m \
+	--conf spark.driver.memory=600m \
     --py-files ${SPARK_APP_PYFILES} \
     ${SPARK_APP} \
     ${SPARK_APP_CONFIG} ${SPARK_APP_WORKERS} ${SPARK_APP_DEMO} ${SPARK_APP_TEST}

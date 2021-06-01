@@ -21,6 +21,11 @@ else:
     from mondrian import partition_dataframe
     from validation import get_validation_function
 
+import pandas
+import numpy as np
+from minisom import MiniSom
+
+
 
 # Functions to generate the anonymous dataset
 
@@ -111,12 +116,34 @@ def anonymize(df,
     """Perform the clustering using K-anonymity and L-diversity and using
     the Mondrian algorithm. Then generalizes the quasi-identifier columns.
     """
-    df = remove_id(df, id_columns, redact)
-    partitions = partition_dataframe(df=df,
-                                     quasiid_columns=quasiid_columns,
+    numerical_index = [df[col].dtype.name in ('int64', 'float64') and \
+        col in quasiid_columns for col in df.columns]
+    columns_to_drop = [col for col in df.loc[:,numerical_index].columns]
+    
+    data = df.loc[:,numerical_index]
+    # data normalization
+    data = (data - np.mean(data, axis=0)) / np.std(data, axis=0)
+    data = data.to_numpy()
+    
+    som = MiniSom(x=150, y=150, input_len=data.shape[1], sigma=.5, learning_rate=.7, 
+              neighborhood_function='gaussian', random_seed=0)
+    
+    som.train(data, 1000, verbose=False)  # random training
+    
+    columns_som = np.array([som.winner(data[x]) for x in range(len(data))])
+    df_dropped = df.drop(columns=columns_to_drop)
+    df_SOM = df_dropped.join(pandas.DataFrame(columns_som, columns=['som1','som2']))
+    quasiid_som = [col for col in quasiid_columns if df[col].dtype.name in ('object','category')] + \
+        ['som1','som2']
+
+    partitions = partition_dataframe(df=df_SOM,
+                                     quasiid_columns=quasiid_som,
                                      sensitive_columns=sensitive_columns,
                                      column_score=column_score,
                                      is_valid=get_validation_function(K, L))
+    
+    df = remove_id(df, id_columns, redact)
+
     return generalize_quasiid(df=df,
                               partitions=partitions,
                               quasiid_columns=quasiid_columns,
