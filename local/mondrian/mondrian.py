@@ -53,31 +53,11 @@ def cut_column(ser):
     return (dfl, dfr, median)
 
 
-def cut_column_birch(birch, ser):
-    if ser.dtype.name in ('object', 'category'):
-        frequencies = ser.value_counts()
-        pos = len(ser) // 2
-        median_idx = lc = 0
-        for count in frequencies:
-            median_idx += 1
-            lc += count
-            if lc >= pos:
-                # move the median to the less represented side
-                rc = len(ser) - lc
-                if lc - count > rc:
-                    median_idx -= 1
-                break
-        values = frequencies.index
-        lv = set(values[:median_idx])
-        rv = set(values[median_idx:])
-        dfl = ser.index[ser.isin(lv)]
-        dfr = ser.index[ser.isin(rv)]
-        median = "obj-cat"
-    else:
-        X = np.reshape(ser.to_numpy(), (-1, 1))
-        labels = birch.fit_predict(X)
-        dfl = ser.index[labels == 0]
-        dfr = ser.index[labels == 1]
+def clustering(birch, df, numerical_quasiid):
+    X = df[np.intersect1d(df.columns, numerical_quasiid)].to_numpy()
+    labels = birch.fit_predict(X)
+    dfl = df.index[labels == 0]
+    dfr = df.index[labels == 1]
     return (dfl, dfr)
     
 
@@ -109,16 +89,20 @@ def partition_dataframe(df,
         # otherwise skip to next column available
         # If no valid cut is found, then return the whole partition
         for score, column in sorted(scores, reverse=True):
-            lp, rp, median = cut_column(df[column][partition])
-            #lp, rp = cut_column_birch(birch, df[column][partition])
+            if df[column][partition].dtype.name in ('object', 'category'):
+                lp, rp, median = cut_column(df[column][partition])
+            else:
+                #lp, rp, median = cut_column(df[column][partition])
+                lp, rp = clustering(birch, df.iloc[partition,:], ['som1','som2'])
             if not (is_valid(df, lp, sensitive_columns)
                     and is_valid(df, rp, sensitive_columns)):
                 continue
             partitions_number += 1
-            print('cutting over column:', column, '(', 'score:', score,
-                  'median:', median, 'partition:', partitions_number, ')')
-            #print('cutting over column:', column, '(', 'score:', score,
-            #    'partition:', partitions_number, ')')
+            if df[column][partition].dtype.name in ('object', 'category'):
+                print('cutting over column:', column, '(', 'score:', score,
+                    'median:', median, 'partition:', partitions_number, ')')
+            else:
+                print("clustering over numerical columns: som1-som2 ( partition:", partitions_number, ')')
             partitions.append(lp)
             partitions.append(rp)
             break

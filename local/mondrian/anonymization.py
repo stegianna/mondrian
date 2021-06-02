@@ -125,12 +125,13 @@ def anonymize(df,
     data = (data - np.mean(data, axis=0)) / np.std(data, axis=0)
     data = data.to_numpy()
     
-    som = MiniSom(x=150, y=150, input_len=data.shape[1], sigma=.5, learning_rate=.7, 
+    som = MiniSom(x=1, y=2, input_len=data.shape[1], sigma=.5, learning_rate=.5, 
               neighborhood_function='gaussian', random_seed=0)
     
-    som.train(data, 1000, verbose=False)  # random training
+    som.train(data, len(data), verbose=True)  # random training
     
-    columns_som = np.array([som.winner(data[x]) for x in range(len(data))])
+    columns_som = np.array([som.activate(data[x]) for x in range(len(data))])
+    columns_som = np.squeeze(columns_som, axis=1)
     df_dropped = df.drop(columns=columns_to_drop)
     df_SOM = df_dropped.join(pandas.DataFrame(columns_som, columns=['som1','som2']))
     quasiid_som = [col for col in quasiid_columns if df[col].dtype.name in ('object','category')] + \
