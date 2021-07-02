@@ -4,7 +4,7 @@
     "quasiid_columns": ["STATEFIP", "AGE", "EDUCD", "OCC"],
     "sensitive_columns": ["INCTOT"],
     "column_score": "span",
-    "K": 3,
+    "K": 5,
     "L": 2,
     "quasiid_generalizations": [
         {
