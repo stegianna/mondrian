@@ -1,10 +1,10 @@
 {
     "input": "dataset/random.csv",
     "output": "anonymized/random.csv",
-    "quasiid_columns": ["col1", "col2", "col3", "col4", "col5"],
+    "quasiid_columns": ["col1", "col2", "col3"],
     "sensitive_columns": ["sens_col"],
     "column_score": "span",
-    "K": 3,
+    "K": 100,
     "L": 2,
     "quasiid_generalizations": [
         {
