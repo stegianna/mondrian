@@ -109,16 +109,16 @@ def partition_dataframe(df,
         # otherwise skip to next column available
         # If no valid cut is found, then return the whole partition
         for score, column in sorted(scores, reverse=True):
-            lp, rp, median = cut_column(df[column][partition])
-            #lp, rp = cut_column_birch(birch, df[column][partition])
+            #lp, rp, median = cut_column(df[column][partition])
+            lp, rp = cut_column_birch(birch, df[column][partition])
             if not (is_valid(df, lp, sensitive_columns)
                     and is_valid(df, rp, sensitive_columns)):
                 continue
             partitions_number += 1
-            print('cutting over column:', column, '(', 'score:', score,
-                  'median:', median, 'partition:', partitions_number, ')')
             #print('cutting over column:', column, '(', 'score:', score,
-            #    'partition:', partitions_number, ')')
+            #      'median:', median, 'partition:', partitions_number, ')')
+            print('cutting over column:', column, '(', 'score:', score,
+                'partition:', partitions_number, ')')
             partitions.append(lp)
             partitions.append(rp)
             break

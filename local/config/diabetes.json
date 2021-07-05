@@ -1,21 +1,12 @@
 {
 	"input": "dataset/diabetes.csv",
 	"output": "anonymized/diabetes.csv",
-    "quasiid_columns": ["Age", "Pregnancies"],
+    "quasiid_columns": ["Pregnancies","BloodPressure"],
     "sensitive_columns": ["Outcome"],
-    "column_score": "span",
-    "K": 3,
+    "column_score": "neg_entropy",
+    "K": 100,
     "L": 2,
     "quasiid_generalizations": [
-		{
-			"qi_name": "Age",
-			"generalization_type": "numerical",
-			"params": {
-				"fanout": 2,
-				"accuracy": 2,
-				"digits": 3
-			}
-		},
 		{
 			"qi_name": "Pregnancies",
 			"generalization_type": "common_prefix",

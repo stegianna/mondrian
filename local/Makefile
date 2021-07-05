@@ -55,3 +55,6 @@ random: $(VENV) $(OUTPUT_DIR)
 
 gaussian: $(VENV) $(OUTPUT_DIR)
 	$(PYTHON) $(APP) config/gaussian.json $(DEMO)
+
+diabetes: $(VENV) $(OUTPUT_DIR)
+	$(PYTHON) $(APP) config/diabetes.json $(DEMO)
