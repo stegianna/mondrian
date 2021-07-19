@@ -200,6 +200,10 @@ distributed/hdfs
 local/anonymized
 distributed/anonymized
 
+# usa2018 dataset
+local/dataset/usa2018.csv
+distributed/dataset/usa2018.csv
+
 # Artifact temp file
 usa_*.csv
 percom_artifact_experiments/loss_measures.csv
