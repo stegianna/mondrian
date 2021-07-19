@@ -138,3 +138,9 @@ A demo of it can be run with:
 ```shell
 make local-adults
 ```
+
+# BIRCH Version
+
+The centralized version performs the anonymization through *BIRCH Clustering*. The implementation of this new version is contained in `local/mondrian/mondrian.py`.
+
+It is possible to return to the classic version of Mondrian by commenting/uncommenting the relative lines of code.

@@ -50,8 +50,8 @@ tests: $(VENV)
 2dtest: $(VENV) $(OUTPUT_DIR)
 	$(PYTHON) $(APP) config/2dtest.json $(DEMO)
 
-random: $(VENV) $(OUTPUT_DIR)
-	$(PYTHON) $(APP) config/random.json $(DEMO)
+uniform: $(VENV) $(OUTPUT_DIR)
+	$(PYTHON) $(APP) config/uniform.json $(DEMO)
 
 gaussian: $(VENV) $(OUTPUT_DIR)
 	$(PYTHON) $(APP) config/gaussian.json $(DEMO)

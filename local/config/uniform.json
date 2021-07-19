@@ -1,6 +1,6 @@
 {
-    "input": "dataset/random.csv",
-    "output": "anonymized/random.csv",
+    "input": "dataset/uniform.csv",
+    "output": "anonymized/uniform.csv",
     "quasiid_columns": ["col1", "col2", "col3"],
     "sensitive_columns": ["sens_col"],
     "column_score": "span",
